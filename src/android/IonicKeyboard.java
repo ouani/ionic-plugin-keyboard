@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.Window;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.inputmethod.InputMethodManager;
 
@@ -27,6 +28,8 @@ public class IonicKeyboard extends CordovaPlugin{
         final float density = dm.density;
 
         final CordovaWebView appView = webView;
+		
+		final Window window = cordova.getActivity().getWindow();
 
         //http://stackoverflow.com/a/4737265/1091751 detect if keyboard is showing
         final View rootView = cordova.getActivity().getWindow().getDecorView().findViewById(android.R.id.content).getRootView();
@@ -37,12 +40,16 @@ public class IonicKeyboard extends CordovaPlugin{
                 Rect r = new Rect();
                 //r will be populated with the coordinates of your view that area still visible.
                 rootView.getWindowVisibleDisplayFrame(r);
+				
+				Rect rectgle= new Rect();
+				window.getDecorView().getWindowVisibleDisplayFrame(rectgle);
+				int StatusBarHeight= (int)(rectgle.top/density);
 
-                int heightDiff = rootView.getRootView().getHeight() - (r.bottom);
+                int heightDiff = rootView.getRootView().getHeight() - (r.bottom - r.top);
                 int pixelHeightDiff = (int)(heightDiff / density);
                 if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
                     appView.sendJavascript("cordova.plugins.Keyboard.isVisible = true");
-                    appView.sendJavascript("cordova.fireWindowEvent('native.keyboardshow', { 'keyboardHeight':" + Integer.toString(pixelHeightDiff)+"});");
+                    appView.sendJavascript("cordova.fireWindowEvent('native.keyboardshow', { 'statusBarHeight':" + Integer.toString(StatusBarHeight)+", 'keyboardHeight':" + Integer.toString(pixelHeightDiff)+"});");
 
                     //deprecated
                     appView.sendJavascript("cordova.fireWindowEvent('native.showkeyboard', { 'keyboardHeight':" + Integer.toString(pixelHeightDiff)+"});");
