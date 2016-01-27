@@ -38,7 +38,7 @@ channel.onCordovaReady.subscribe(function() {
     function success(msg) {
         var action = msg.charAt(0);
         if ( action === 'S' ) {
-			var heights = msg.substr(1).split(";');
+			var heights = msg.substr(1).split(";");
             var keyboardHeight = heights[0];
 			var statusBarHeight = heights[1];
             cordova.plugins.Keyboard.isVisible = true;
