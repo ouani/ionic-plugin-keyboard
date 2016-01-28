@@ -77,7 +77,7 @@ public class IonicKeyboard extends CordovaPlugin {
                             
                             PluginResult result;
 
-							int heightDiff = rootView.getRootView().getHeight() - (r.bottom - r.top);
+							int heightDiff = rootView.getRootView().getHeight() - r.bottom;
                             int pixelHeightDiff = (int)(heightDiff / density);
                             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
                             	String msg = "S" + Integer.toString(pixelHeightDiff) + ";" + Integer.toString(StatusBarHeight);
