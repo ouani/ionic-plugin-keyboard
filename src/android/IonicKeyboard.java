@@ -17,6 +17,10 @@ import android.view.Window;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.inputmethod.InputMethodManager;
 
+import android.os.Build;
+import android.graphics.Point;
+import android.view.Display;
+
 public class IonicKeyboard extends CordovaPlugin {
 
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -76,8 +80,20 @@ public class IonicKeyboard extends CordovaPlugin {
 							int StatusBarHeight= (int)(rectgle.top/density);
                             
                             PluginResult result;
+							
+							//http://stackoverflow.com/a/29257533/3642890 beware of nexus 5
+							int screenHeight;
+							
+							if (Build.VERSION.SDK_INT >= 21) {
+								Display display = cordova.getActivity().getWindowManager().getDefaultDisplay();
+								Point size = new Point();
+								display.getSize(size);
+								screenHeight = size.y;
+							} else {
+								screenHeight = rootView.getRootView().getHeight();	
+							}
 
-							int heightDiff = rootView.getRootView().getHeight() - r.bottom;
+							int heightDiff = screenHeight - (r.bottom - r.top);
                             int pixelHeightDiff = (int)(heightDiff / density);
                             if (pixelHeightDiff > 100 && pixelHeightDiff != previousHeightDiff) { // if more than 100 pixels, its probably a keyboard...
                             	String msg = "S" + Integer.toString(pixelHeightDiff) + ";" + Integer.toString(StatusBarHeight);
@@ -95,8 +111,7 @@ public class IonicKeyboard extends CordovaPlugin {
                          }
                     };
 
-                    rootView.getViewTreeObserver().addOnGlobalLayoutListener(list);
-                	
+                    rootView.getViewTreeObserver().addOnGlobalLayoutListener(list);              	
                 	
                     PluginResult dataResult = new PluginResult(PluginResult.Status.OK);
                     dataResult.setKeepCallback(true);
